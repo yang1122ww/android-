@@ -1,0 +1,29 @@
+handler机制
+Handler机制详解
+主线程加载参考
+https://blog.csdn.net/hzwailll/article/detaiIs/85339714
+—.Android系统中处理流程
+1主线程(android.app.ActivityThread)初始化，调用main方
+2.main方法中创建looper,MessageQueue等对象，最后调用
+looper.loop循环监控消息队列
+3．继承handler的各种类（比如UiccControIIer),重写
+handleMessage方法
+4，通过registerForXXX方法，在RegistrantList中添加
+Registrant对象
+5，发送消息时调用Registrant中的notifyRegistrant，最后调用
+Handler.java中的sendMessageAtTime方法
+6．在sendMessageAtTime中调用MessageQueue的
+enqueueMessage,将消息加入到消息队列的合适位置
+7．返回到主线程，调用looper.loop，会死循环监控消息队列
+8．在looper.loop中调用Handler中的dispatchMessage方法
+9，最后在dispatchMessage中调用handleMessage
+二.其它线程looper
+      原因：将工作线程需操作U啲消息传递到主线程，使得主线程可根据工作线程的需求更新U丨，从而避免线程操作不安全的问题
+      每一个线程只能对应一个Looper,当我们的子线程想修改Activity中的UI组件时，我们可以新建一个Handler对象，通过这个对象向主线程发送信息；而我们发送的信息会先到主线程的MessageQueue进行等待，由Looper按先入先出顺序取出，再根据message对象的what属性分发给对应的Handler进行处理！
+三handler简单使用方法
+主线程中，继承Handler,重写handIerMessage即可
+其它线程中，继承Thread，创建handler和looper对象
+1．调用Looper.prepare();初始化
+2，创建handler时重写handleMessage方法
+mHandIer=newHandler(){
+publicvoidhandleMessage(Messagemsg){
